@@ -1,0 +1,4 @@
+os:
+  edit: 'nvim --server {{env.NVIM_SERVER}} --remote-tab {{filename}}'
+  editAtLine: 'nvim --server {{env.NVIM_SERVER}} --remote-tab +{{line}} {{filename}}'
+
