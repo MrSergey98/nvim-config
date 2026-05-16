@@ -53,8 +53,9 @@ vim.api.nvim_create_autocmd("DirChanged", {
 vim.api.nvim_create_autocmd("CursorHold", {
     callback = function()
         local clients = vim.lsp.get_clients({ bufnr = 0 })
+        if #clients == 0 then return end
         for _, client in ipairs(clients) do
-            if client.supports_method("textDocument/documentHighlight") then
+            if client.server_capabilities.documentHighlightProvider then
                 vim.lsp.buf.document_highlight()
                 return
             end
