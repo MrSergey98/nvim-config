@@ -13,7 +13,7 @@ vim.diagnostic.config({
 })
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
-vim.opt.updatetime = 250
+vim.opt.updatetime = 50
 vim.env.GIT_EDITOR = "nvim"
 vim.env.EDITOR = "nvim"
 vim.opt.signcolumn = "yes"
