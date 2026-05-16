@@ -88,3 +88,14 @@ vim.keymap.set("n", "<leader>hp", gs.preview_hunk, { desc = "Preview hunk" })
 
 -- Blame
 vim.keymap.set("n", "<leader>hb", gs.blame_line,   { desc = "Blame line" })
+
+local dap = require("dap")
+local dapui = require("dapui")
+
+vim.keymap.set("n", "<F5>",  dap.continue,          { desc = "Debug: Continue" })
+vim.keymap.set("n", "<F10>", dap.step_over,          { desc = "Debug: Step over" })
+vim.keymap.set("n", "<F11>", dap.step_into,          { desc = "Debug: Step into" })
+vim.keymap.set("n", "<F12>", dap.step_out,           { desc = "Debug: Step out" })
+vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, { desc = "Debug: Toggle breakpoint" })
+vim.keymap.set("n", "<leader>dc", dap.terminate,     { desc = "Debug: Stop" })
+vim.keymap.set("n", "<leader>du", dapui.toggle,      { desc = "Debug: Toggle UI" })

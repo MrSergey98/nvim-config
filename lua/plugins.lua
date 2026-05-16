@@ -137,3 +137,7 @@ require("gitsigns").setup({
     },
     current_line_blame = false,  -- включить если хотите blame на каждой строке
 })
+vim.pack.add({ { src = "https://github.com/mfussenegger/nvim-dap" } })
+vim.pack.add({ { src = "https://github.com/mfussenegger/nvim-dap-python" } })
+vim.pack.add({ { src = "https://github.com/rcarriga/nvim-dap-ui" } })
+vim.pack.add({ { src = "https://github.com/nvim-neotest/nvim-nio" } })  -- зависимость dap-ui
