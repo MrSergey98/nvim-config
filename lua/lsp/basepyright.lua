@@ -3,8 +3,10 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- PYTHON LSP
 vim.api.nvim_create_autocmd("DirChanged", {
+    pattern = "global",  -- только при явной смене через :cd, не при открытии файлов
     callback = function()
-        local poetry_output = vim.fn.trim(vim.fn.system("poetry env info --path"))
+        local cwd = vim.fn.getcwd()
+        local poetry_output = vim.fn.trim(vim.fn.system("cd " .. cwd .. " && poetry env info --path"))
         local python_path
         if poetry_output == "" or poetry_output:find("No virtual") then
             python_path = vim.fn.exepath("python")
@@ -14,7 +16,6 @@ vim.api.nvim_create_autocmd("DirChanged", {
 
         vim.notify("basedpyright python: " .. python_path)
 
-        -- перезапустить basedpyright с новым путём
         for _, client in ipairs(vim.lsp.get_clients({ name = "basedpyright" })) do
             vim.lsp.stop_client(client.id)
         end

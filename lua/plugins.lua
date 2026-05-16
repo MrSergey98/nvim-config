@@ -73,7 +73,13 @@ vim.pack.add({
 require("nvim-tree").setup({
 	 view = {
       width = 40,
-    }
+    },
+	 actions = {
+        change_dir = {
+            enable = true,
+            global = true,  -- менять глобальный cwd а не локальный
+        },
+    },
 })
 
 vim.pack.add({
