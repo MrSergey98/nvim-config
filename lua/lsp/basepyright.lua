@@ -1,45 +1,51 @@
--- LSP capabilities для cmp
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
--- PYTHON LSP
+local function setup_basedpyright(python_path)
+    vim.lsp.config("basedpyright", {
+        capabilities = capabilities,
+        settings = {
+            python = { pythonPath = python_path },
+            basedpyright = {
+                typeCheckingMode = "basic",
+                reportUnknownMemberType = false,
+                reportUnknownVariableType = false,
+                reportUnknownParameterType = false,
+                reportMissingTypeArgument = false,
+                reportUnannotatedClassAttribute = false,
+                analysis = {
+                    autoImportCompletions = true,
+                    autoSearchPaths = true,
+                    useLibraryCodeForTypes = true,
+                },
+            }
+        },
+    })
+    vim.lsp.enable("basedpyright")
+end
+
+local function get_python_path(cwd)
+    local poetry_output = vim.fn.trim(vim.fn.system("cd " .. cwd .. " && poetry env info --path"))
+    if poetry_output == "" or poetry_output:find("No virtual") then
+        return vim.fn.exepath("python")
+    end
+    return poetry_output .. "\\Scripts\\python.exe"
+end
+
+-- Запуск при старте
+local python_path = get_python_path(vim.fn.getcwd())
+vim.notify("basedpyright python: " .. python_path)
+setup_basedpyright(python_path)
+
+-- Перезапуск при смене директории
 vim.api.nvim_create_autocmd("DirChanged", {
-    pattern = "global",  -- только при явной смене через :cd, не при открытии файлов
+    pattern = "global",
     callback = function()
-        local cwd = vim.fn.getcwd()
-        local poetry_output = vim.fn.trim(vim.fn.system("cd " .. cwd .. " && poetry env info --path"))
-        local python_path
-        if poetry_output == "" or poetry_output:find("No virtual") then
-            python_path = vim.fn.exepath("python")
-        else
-            python_path = poetry_output .. "\\Scripts\\python.exe"
-        end
-
-        vim.notify("basedpyright python: " .. python_path)
-
+        local new_python_path = get_python_path(vim.fn.getcwd())
+        vim.notify("basedpyright python: " .. new_python_path)
         for _, client in ipairs(vim.lsp.get_clients({ name = "basedpyright" })) do
             vim.lsp.stop_client(client.id)
         end
-
-        vim.lsp.config("basedpyright", {
-            capabilities = capabilities,
-            settings = {
-                python = { pythonPath = python_path },
-                basedpyright = {
-                    typeCheckingMode = "basic",
-                    reportUnknownMemberType = false,
-                    reportUnknownVariableType = false,
-                    reportUnknownParameterType = false,
-                    reportMissingTypeArgument = false,
-                    reportUnannotatedClassAttribute = false,
-                    analysis = {
-                        autoImportCompletions = true,
-                        autoSearchPaths = true,
-                        useLibraryCodeForTypes = true,
-                    },
-                }
-            },
-        })
-        vim.lsp.enable("basedpyright")
+        setup_basedpyright(new_python_path)
     end,
 })
 
