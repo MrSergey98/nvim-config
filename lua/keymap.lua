@@ -56,23 +56,23 @@ vim.keymap.set("i", ".", function()
     end)
 end)
 -- Lazygit
+local Terminal = require("toggleterm.terminal").Terminal
+local lazygit = Terminal:new({
+    cmd = "lazygit",
+    direction = "float",
+	close_on_exit = true,
+    env = {
+        LG_CONFIG_FILE = vim.fn.stdpath("config") .. "\\lazygit.yml",
+        NVIM_SERVER = vim.v.servername,
+    },
+    on_exit = function()
+        vim.cmd("checktime")
+    end,
+})
+
 vim.keymap.set("n", "<leader>gg", function()
-    local Terminal = require("toggleterm.terminal").Terminal
-    local lazygit = Terminal:new({
-        cmd = "lazygit",
-        direction = "float",
-        close_on_exit = true,
-        env = {
-            LG_CONFIG_FILE = vim.fn.stdpath("config") .. "\\lazygit.yml",
-            NVIM_SERVER = vim.v.servername,
-        },
-        on_exit = function()
-            vim.cmd("checktime")
-        end,
-    })
     lazygit:toggle()
 end, { desc = "LazyGit" })
-
 -- Gitsigns
 local gs = require("gitsigns")
 
