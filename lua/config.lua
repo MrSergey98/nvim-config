@@ -5,7 +5,9 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.colorcolumn = "150"
 vim.opt.listchars = "tab: ,multispace:|   ,eol:󰌑"
-vim.opt.winborder = "rounded"
+if vim.fn.has("nvim-0.11") == 1 then
+    vim.opt.winborder = "rounded"
+end
 vim.opt.clipboard = "unnamedplus"
 vim.g.mapleader = " "
 vim.diagnostic.config({
