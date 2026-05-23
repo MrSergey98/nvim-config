@@ -6,17 +6,13 @@ install: nvim deps plugins mason
 	@echo "✓ All done. Restart nvim."
 
 nvim:
-	@if which nvim > /dev/null 2>&1 && nvim --version | head -1 | grep -qE "v0\.(1[1-9]|[2-9][0-9])"; then \
-		echo "✓ Neovim $$(nvim --version | head -1) already installed"; \
-	else \
-		echo "→ Installing Neovim..."; \
-		sudo apt-get remove -y neovim 2>/dev/null || true; \
-		curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz; \
-		tar -xf nvim-linux-x86_64.tar.gz; \
-		sudo install nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim; \
-		rm -rf nvim-linux-x86_64 nvim-linux-x86_64.tar.gz; \
-		echo "✓ Neovim installed"; \
-	fi
+	@echo "→ Installing Neovim..."
+	@sudo apt-get remove -y neovim 2>/dev/null || true
+	curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+	tar -xf nvim-linux-x86_64.tar.gz
+	sudo cp -r nvim-linux-x86_64/* /usr/local/
+	rm -rf nvim-linux-x86_64 nvim-linux-x86_64.tar.gz
+	@echo "✓ Neovim $$(nvim --version | head -1) installed"
 
 deps:
 	@echo "→ Checking system dependencies..."
