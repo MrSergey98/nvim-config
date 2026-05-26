@@ -31,6 +31,13 @@ vim.keymap.set("n", "<leader>fi", function()
 		apply = true,
 	})
 end, { desc = "Fix imports (ruff)" })
+vim.keymap.set("n", "<leader>p", function()
+    vim.cmd("put")
+end, { desc = "Paste line below" })
+
+vim.keymap.set("n", "<leader>P", function()
+    vim.cmd("put!")
+end, { desc = "Paste line above" })
 
 vim.api.nvim_create_user_command("G", function(opts)
 	local input = opts.args
