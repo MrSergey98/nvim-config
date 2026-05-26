@@ -1,3 +1,6 @@
+local is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1
+local path_sep = is_windows and "\\" or "/"
+local python_bin = is_windows and "Scripts\\python.exe" or "bin/python"
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 local function setup_basedpyright(python_path)
@@ -24,11 +27,17 @@ local function setup_basedpyright(python_path)
 end
 
 local function get_python_path(cwd)
-    local poetry_output = vim.fn.trim(vim.fn.system("cd " .. cwd .. " && poetry env info --path"))
-    if poetry_output == "" or poetry_output:find("No virtual") then
-        return vim.fn.exepath("python")
+    local cmd = is_windows
+        and ("cd /d " .. cwd .. " && poetry env info --path")
+        or  ("cd " .. cwd .. " && poetry env info --path")
+    local poetry_output = vim.fn.trim(vim.fn.system(cmd))
+    -- берём только последнюю строку (путь), игнорируем предупреждения
+    local last_line = poetry_output:match("([^\n]+)$")
+    poetry_output = last_line or poetry_output
+    if poetry_output == "" or poetry_output:find("No virtual") or poetry_output:find("not found") or poetry_output:find("invalid") then
+        return vim.fn.exepath("python3") ~= "" and vim.fn.exepath("python3") or vim.fn.exepath("python")
     end
-    return poetry_output .. "\\Scripts\\python.exe"
+    return poetry_output .. path_sep .. python_bin
 end
 
 -- Запуск при старте
