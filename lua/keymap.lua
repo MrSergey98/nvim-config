@@ -13,7 +13,9 @@ vim.keymap.set("n", "K", vim.diagnostic.open_float)
 
 local opts = { noremap = true, silent = true }
 
-vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+vim.keymap.set("n", "gd", function()
+    require("fzf-lua").lsp_definitions({ jump1 = true })
+end, opts)
 vim.keymap.set("n", "<Leader>fo", ":lua vim.lsp.buf.format()<CR>", opts)
 vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>")
 vim.keymap.set("n", "<leader>td", function()
