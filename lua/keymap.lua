@@ -62,6 +62,11 @@ local Terminal = require("toggleterm.terminal").Terminal
 local lazygit = Terminal:new({
 	cmd = "lazygit",
 	direction = "float",
+	float_opts = {
+        border = "rounded",
+        width = math.floor(vim.o.columns * 0.9),
+        height = math.floor(vim.o.lines * 0.9),
+    },
 	close_on_exit = true,
 	env = {
 		LG_CONFIG_FILE = vim.fs.joinpath(vim.fn.stdpath("config"), "lazygit.yml"),
