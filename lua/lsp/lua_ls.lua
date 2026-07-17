@@ -1,15 +1,15 @@
-return {
-    cmd = { 'lua-language-server' },
-    filetypes = { 'lua' },
+vim.lsp.config("lua_ls", {
+    cmd = { "lua-language-server" },
+    filetypes = { "lua" },
     root_markers = {
-        '.luarc.json',
-        '.luarc.jsonc',
-        '.luacheckrc',
-        '.stylua.toml',
-        'stylua.toml',
-        'selene.toml',
-        'selene.yml',
-        '.git',
+        ".luarc.json",
+        ".luarc.jsonc",
+        ".luacheckrc",
+        ".stylua.toml",
+        "stylua.toml",
+        "selene.toml",
+        "selene.yml",
+        ".git",
     },
     settings = {
         Lua = {
@@ -24,9 +24,13 @@ return {
                 globals = { "vim" },
             },
             workspace = {
-                library = { vim.env.VIMRUNTIME },
+                library = {
+                    vim.env.VIMRUNTIME,
+                    vim.fn.stdpath("config") .. "/lua",
+                },
                 checkThirdParty = false,
             },
         },
     },
-}
+})
+vim.lsp.enable("lua_ls")
