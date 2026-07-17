@@ -27,17 +27,43 @@ local function setup_basedpyright(python_path)
 end
 
 local function get_python_path(cwd)
+    -- 1. Локальный venv в папке проекта (.venv или venv)
+    local venv_dirs = { ".venv", "venv", "env", ".env" }
+    for _, venv in ipairs(venv_dirs) do
+        local venv_python = cwd .. path_sep .. venv .. path_sep .. python_bin
+        if vim.fn.filereadable(venv_python) == 1 then
+            return venv_python
+        end
+    end
+
+    -- 2. Poetry
     local cmd = is_windows
         and ("cd /d " .. cwd .. " && poetry env info --path")
         or  ("cd " .. cwd .. " && poetry env info --path")
     local poetry_output = vim.fn.trim(vim.fn.system(cmd))
-    -- берём только последнюю строку (путь), игнорируем предупреждения
     local last_line = poetry_output:match("([^\n]+)$")
     poetry_output = last_line or poetry_output
-    if poetry_output == "" or poetry_output:find("No virtual") or poetry_output:find("not found") or poetry_output:find("invalid") then
-        return vim.fn.exepath("python3") ~= "" and vim.fn.exepath("python3") or vim.fn.exepath("python")
+    if poetry_output ~= "" and not poetry_output:find("No virtual") and not poetry_output:find("not found") and not poetry_output:find("invalid") then
+        return poetry_output .. path_sep .. python_bin
     end
-    return poetry_output .. path_sep .. python_bin
+
+    -- 3. Pipenv
+    local pipenv_output = vim.fn.trim(vim.fn.system("cd " .. cwd .. " && pipenv --venv 2>/dev/null"))
+    if pipenv_output ~= "" and not pipenv_output:find("No virtual") then
+        return pipenv_output .. path_sep .. python_bin
+    end
+
+    -- 4. Conda (если активирован)
+    local conda_prefix = vim.env.CONDA_PREFIX
+    if conda_prefix and conda_prefix ~= "" then
+        local conda_python = conda_prefix .. path_sep .. python_bin
+        if vim.fn.filereadable(conda_python) == 1 then
+            return conda_python
+        end
+    end
+
+    -- 5. Системный python
+    return vim.fn.exepath("python3") ~= "" and vim.fn.exepath("python3") or vim.fn.exepath("python")
 end
 
 -- Запуск при старте
